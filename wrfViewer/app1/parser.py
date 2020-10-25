@@ -10,7 +10,7 @@ class rslOutParser:
         self.rslFilePath = rslFilePath
         self.dataLines = []
 
-    def tryParse(self):
+    def tryParse(self, fromRowIndex):
         """ a """
         print('aaaaa')
         with open(self.rslFilePath) as rslFile:
@@ -19,7 +19,7 @@ class rslOutParser:
         
         host = self.getHostRunningIn()
         cores = self.getCoresRunning()
-        dateTimes, elapseSecs = self.getAllTime()
+        dateTimes, elapseSecs = self.getAllTime(fromRowIndex)
 
         # '%F %X 格式示例：2016-01-01 00:00:18'
         outData = {
@@ -64,7 +64,7 @@ class rslOutParser:
             startCalIndex += 1
         return 'None'
     
-    def getAllTime(self):
+    def getAllTime(self, fromRowIndex):
         """_"""
         nowLineIndex = self.findStartRunningIndex()
         firstDateTime, _, _ = self.getDataLineNowTimeDomainAndElapsedSec(nowLineIndex)
@@ -82,8 +82,10 @@ class rslOutParser:
             nowLineIndex += 1
 
         # print(len(dateTimes), len(elapseSecs))
-        
-        return dateTimes, elapseSecs
+        if fromRowIndex < len(dateTimes) and fromRowIndex > 0:
+            return dateTimes[fromRowIndex:], elapseSecs[fromRowIndex:]
+        else:
+            return dateTimes, elapseSecs
 
     def getDataLineNowTimeDomainAndElapsedSec(self, lineIndex):
         """ 此方法获取一行log内的当前时间和运算时长 """

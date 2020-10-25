@@ -14,10 +14,18 @@ class tryClass(View):
         """ GET Request时执行的方法 """
         rslFilePath = '/Users/richard/Documents/iOS_Study/swift_program/WRFViewer/resources/djangoResources/rsl.out.0000.log'
         rslParser = rslOutParser(rslFilePath)
-        # return HttpResponse('yes!')
+        
         print('start to parse')
-        outData = rslParser.tryParse()
-        # print(outData)
+
+        if request.GET.get('fromRowIndex'):
+            try:
+                fromRowIndex = int(request.GET.get('fromRowIndex'))
+            except ValueError:
+                fromRowIndex = 0
+        else:
+            fromRowIndex = 0
+
+        outData = rslParser.tryParse(fromRowIndex)
         outJson = json.dumps(outData)
         return HttpResponse(outJson)
 
